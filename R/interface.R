@@ -81,8 +81,8 @@ RPhosFate <- function(...) {
 #' for example, \emph{ppt_ctf} for PP transfers.
 #' * \emph{xxt_inp:} Substance inputs into surface waters in t/cell/yr (SS) or
 #' kg/cell/yr, for example, \emph{ppt_inp} for PP inputs into surface waters.
-#' * \emph{xxt_out:} Substance outlet loads in t/cell/yr (SS) or kg/cell/yr, for
-#' example, \emph{ppt_out} for PP outlet loads.
+#' * \emph{xxt_out:} Substance outlet loads of subsurface drainages in t/cell/yr
+#' (SS) or kg/cell/yr, for example, \emph{ppt_out} for PP outlet loads.
 #'
 #' @section Data management arguments:
 #' * `cv_dir`: A character vector specifying the project root (first position)
@@ -162,7 +162,7 @@ RPhosFate <- function(...) {
 #' @seealso [`saveState`], [`demoProject`]
 #'
 #' @examples
-#'
+#' \donttest{
 #' # temporary demonstration project copy
 #' cv_dir <- demoProject()
 #'
@@ -190,7 +190,7 @@ RPhosFate <- function(...) {
 #'   ls_ini = TRUE,
 #'   is_MCi = 1L,
 #'   cv_MCl = c("xxt", "xxt_cld")
-#' )
+#' )}
 #'
 #' @export
 catchment <- function(...) {
