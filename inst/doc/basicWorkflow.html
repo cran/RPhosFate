@@ -12,7 +12,7 @@
 
 <meta name="author" content="Gerold Hepp" />
 
-<meta name="date" content="2023-03-05" />
+<meta name="date" content="2023-10-07" />
 
 <title>Basic modelling workflow</title>
 
@@ -340,7 +340,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Basic modelling workflow</h1>
 <h4 class="author">Gerold Hepp</h4>
-<h4 class="date">2023-03-05</h4>
+<h4 class="date">2023-10-07</h4>
 
 
 
@@ -350,42 +350,42 @@ with the <code>RPhosFate</code> package.</p>
 <div id="preparations" class="section level2">
 <h2>Preparations</h2>
 <p>Load the package and obtain a copy of the demonstration project:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RPhosFate)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>cv_dir <span class="ot">&lt;-</span> <span class="fu">demoProject</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(RPhosFate)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>cv_dir <span class="ot">&lt;-</span> <span class="fu">demoProject</span>()</span></code></pre></div>
 </div>
 <div id="project-initialisation" class="section level2">
 <h2>Project initialisation</h2>
 <p>Use <code>RPhosFate()</code> or <code>catchment()</code> to
 initialise the project:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">RPhosFate</span>(</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">cv_dir =</span> cv_dir,</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ns_dep_ovl =</span> <span class="fl">25e-4</span>,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ns_dep_cha =</span> <span class="fl">0.0</span>,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">nv_tfc_inl =</span> <span class="fu">c</span>(<span class="at">SS =</span> <span class="fl">0.6</span>, <span class="at">PP =</span> <span class="fl">0.6</span>),</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">nv_enr_rto =</span> <span class="fu">c</span>(<span class="at">PP =</span> <span class="fl">2.0</span>),</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">nm_olc =</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">4704255</span>, <span class="dv">2795195</span>), <span class="at">ncol =</span> 2L),</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">df_cdt =</span> <span class="fu">read.table</span>(</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">file.path</span>(cv_dir, <span class="st">&quot;cdt.txt&quot;</span>),</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">header =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">RPhosFate</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="at">cv_dir =</span> cv_dir,</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="at">ns_dep_ovl =</span> <span class="fl">25e-4</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="at">ns_dep_cha =</span> <span class="fl">0.0</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="at">nv_tfc_inl =</span> <span class="fu">c</span>(<span class="at">SS =</span> <span class="fl">0.6</span>, <span class="at">PP =</span> <span class="fl">0.6</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>  <span class="at">nv_enr_rto =</span> <span class="fu">c</span>(<span class="at">PP =</span> <span class="fl">2.0</span>),</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>  <span class="at">nm_olc =</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">4704255</span>, <span class="dv">2795195</span>), <span class="at">ncol =</span> 2L),</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>  <span class="at">df_cdt =</span> <span class="fu">read.table</span>(</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>    <span class="fu">file.path</span>(cv_dir, <span class="st">&quot;cdt.txt&quot;</span>),</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>    <span class="at">header =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>    <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>  )</span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 <div id="first-model-run-for-suspended-solids-ss" class="section level2">
 <h2>First model run for suspended solids (SS)</h2>
 <p><code>firstRun()</code> calls all low-level interface methods for the
 specified substance in the required order:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">firstRun</span>(x, <span class="at">substance =</span> <span class="st">&quot;SS&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">firstRun</span>(x, <span class="at">substance =</span> <span class="st">&quot;SS&quot;</span>)</span></code></pre></div>
 </div>
 <div id="calibration-quality-of-ss" class="section level2">
 <h2>Calibration quality of SS</h2>
 <p>Snap coordinates of provided calibration gauges to the respective
 midpoint of the nearest channel cell if necessary and check calibration
 quality:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">snapGauges</span>(x)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>metrics <span class="ot">&lt;-</span> <span class="fu">calibrationQuality</span>(x, <span class="at">substance =</span> <span class="st">&quot;SS&quot;</span>, <span class="at">col =</span> <span class="st">&quot;SS_load&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">snapGauges</span>(x)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>metrics <span class="ot">&lt;-</span> <span class="fu">calibrationQuality</span>(x, <span class="at">substance =</span> <span class="st">&quot;SS&quot;</span>, <span class="at">col =</span> <span class="st">&quot;SS_load&quot;</span>)</span></code></pre></div>
 </div>
 <div id="calibrate-ss" class="section level2">
 <h2>Calibrate SS</h2>
@@ -396,11 +396,11 @@ for <code>ns_dep_ovl</code> (overland deposition rate) and/or
 metrics. By default, <code>subsequentRun()</code> only calls the
 <code>transport()</code> low-level interface method for the specified
 substance:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">setParameter</span>(x, <span class="at">ns_dep_ovl =</span> <span class="fl">15e-4</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">subsequentRun</span>(x, <span class="at">substance =</span> <span class="st">&quot;SS&quot;</span>)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>metrics <span class="ot">&lt;-</span> <span class="fu">calibrationQuality</span>(x, <span class="at">substance =</span> <span class="st">&quot;SS&quot;</span>, <span class="at">col =</span> <span class="st">&quot;SS_load&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">setParameter</span>(x, <span class="at">ns_dep_ovl =</span> <span class="fl">15e-4</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">subsequentRun</span>(x, <span class="at">substance =</span> <span class="st">&quot;SS&quot;</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>metrics <span class="ot">&lt;-</span> <span class="fu">calibrationQuality</span>(x, <span class="at">substance =</span> <span class="st">&quot;SS&quot;</span>, <span class="at">col =</span> <span class="st">&quot;SS_load&quot;</span>)</span></code></pre></div>
 <p>The <code>autoCalibrate()</code> and <code>autoCalibrate2()</code>
 methods may provide more comfortable alternatives to this process.</p>
 </div>
@@ -408,19 +408,19 @@ methods may provide more comfortable alternatives to this process.</p>
 <h2>Calibration quality of particulate phosphorus (PP)</h2>
 <p>First, a further call to <code>subsequentRun()</code> for PP is
 necessary:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">subsequentRun</span>(x, <span class="at">substance =</span> <span class="st">&quot;PP&quot;</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>metrics <span class="ot">&lt;-</span> <span class="fu">calibrationQuality</span>(x, <span class="at">substance =</span> <span class="st">&quot;PP&quot;</span>, <span class="at">col =</span> <span class="st">&quot;PP_load&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">subsequentRun</span>(x, <span class="at">substance =</span> <span class="st">&quot;PP&quot;</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>metrics <span class="ot">&lt;-</span> <span class="fu">calibrationQuality</span>(x, <span class="at">substance =</span> <span class="st">&quot;PP&quot;</span>, <span class="at">col =</span> <span class="st">&quot;PP_load&quot;</span>)</span></code></pre></div>
 </div>
 <div id="calibrate-pp" class="section level2">
 <h2>Calibrate PP</h2>
 <p>Same procedure as with SS apart from iteratively specifying better
 parameter values for the enrichment ratio:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">setParameter</span>(x, <span class="at">nv_enr_rto =</span> <span class="fu">c</span>(<span class="at">PP =</span> <span class="fl">1.4</span>))</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">subsequentRun</span>(x, <span class="at">substance =</span> <span class="st">&quot;PP&quot;</span>)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>metrics <span class="ot">&lt;-</span> <span class="fu">calibrationQuality</span>(x, <span class="at">substance =</span> <span class="st">&quot;PP&quot;</span>, <span class="at">col =</span> <span class="st">&quot;PP_load&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">setParameter</span>(x, <span class="at">nv_enr_rto =</span> <span class="fu">c</span>(<span class="at">PP =</span> <span class="fl">1.4</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">subsequentRun</span>(x, <span class="at">substance =</span> <span class="st">&quot;PP&quot;</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>metrics <span class="ot">&lt;-</span> <span class="fu">calibrationQuality</span>(x, <span class="at">substance =</span> <span class="st">&quot;PP&quot;</span>, <span class="at">col =</span> <span class="st">&quot;PP_load&quot;</span>)</span></code></pre></div>
 <p>In case the only substance of interest is PP, it is possible to set
 its enrichment ratio to one and directly calibrate it via
 <code>ns_dep_ovl</code> and/or <code>ns_dep_cha</code>.</p>
@@ -428,7 +428,7 @@ its enrichment ratio to one and directly calibrate it via
 <div id="save-state" class="section level2">
 <h2>Save state</h2>
 <p>Write parameters and transport calculation order to disk:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveState</span>(x)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">saveState</span>(x)</span></code></pre></div>
 <hr />
 </div>
 <div id="return-to-the-calibrated-project-at-a-later-time" class="section level2">
@@ -436,10 +436,10 @@ its enrichment ratio to one and directly calibrate it via
 <p>Simply load the previously saved state of the project via the
 <code>ls_ini</code> argument of <code>RPhosFate()</code> or
 <code>catchment()</code>:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">RPhosFate</span>(</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">cv_dir =</span> cv_dir,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ls_ini =</span> <span class="cn">TRUE</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">RPhosFate</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="at">cv_dir =</span> cv_dir,</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="at">ls_ini =</span> <span class="cn">TRUE</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 
 
