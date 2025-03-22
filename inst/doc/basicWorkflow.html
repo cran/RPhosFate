@@ -12,7 +12,7 @@
 
 <meta name="author" content="Gerold Hepp" />
 
-<meta name="date" content="2023-10-07" />
+<meta name="date" content="2025-03-22" />
 
 <title>Basic modelling workflow</title>
 
@@ -50,6 +50,7 @@ overflow: visible;
 }
 </style>
 <style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -340,7 +341,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Basic modelling workflow</h1>
 <h4 class="author">Gerold Hepp</h4>
-<h4 class="date">2023-10-07</h4>
+<h4 class="date">2025-03-22</h4>
 
 
 
@@ -364,7 +365,7 @@ initialise the project:</p>
 <span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="at">ns_dep_cha =</span> <span class="fl">0.0</span>,</span>
 <span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="at">nv_tfc_inl =</span> <span class="fu">c</span>(<span class="at">SS =</span> <span class="fl">0.6</span>, <span class="at">PP =</span> <span class="fl">0.6</span>),</span>
 <span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>  <span class="at">nv_enr_rto =</span> <span class="fu">c</span>(<span class="at">PP =</span> <span class="fl">2.0</span>),</span>
-<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>  <span class="at">nm_olc =</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">4704255</span>, <span class="dv">2795195</span>), <span class="at">ncol =</span> 2L),</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>  <span class="at">nm_olc =</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">4704255</span>, <span class="dv">2795195</span>), <span class="at">ncol =</span> <span class="dv">2</span><span class="dt">L</span>),</span>
 <span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>  <span class="at">df_cdt =</span> <span class="fu">read.table</span>(</span>
 <span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>    <span class="fu">file.path</span>(cv_dir, <span class="st">&quot;cdt.txt&quot;</span>),</span>
 <span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>    <span class="at">header =</span> <span class="cn">TRUE</span>,</span>
@@ -427,7 +428,7 @@ its enrichment ratio to one and directly calibrate it via
 </div>
 <div id="save-state" class="section level2">
 <h2>Save state</h2>
-<p>Write parameters and transport calculation order to disk:</p>
+<p>Write parameters to disk:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">saveState</span>(x)</span></code></pre></div>
 <hr />
 </div>

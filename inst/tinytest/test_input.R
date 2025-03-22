@@ -28,11 +28,10 @@ if (.Platform$OS.type == "windows" && tinytest::at_home()) {
     cv_dir = cv_dir,
     cs_dem = file.path(cs_dir_lrg, "dem_lrg.tif"),
     cs_cha = file.path(cs_dir_lrg, "cha_lrg.tif"),
-    sp_msk = raster::shapefile(file.path(cs_dir_lrg, "msk.shp")),
-    sp_olp = raster::shapefile(file.path(cs_dir_lrg, "olp.shp")),
-    sp_sds = raster::shapefile(file.path(cs_dir_lrg, "sds.shp")),
+    sp_msk = terra::vect(file.path(cs_dir_lrg, "msk.shp")),
+    sp_olp = terra::vect(file.path(cs_dir_lrg, "olp.shp")),
+    sp_sds = terra::vect(file.path(cs_dir_lrg, "sds.shp")),
     cs_rds = file.path(cs_dir_lrg, "rds_lrg.tif"),
-    cs_wgs = file.path(cs_dir_lrg, "wgs_lrg.tif"),
     ls_tmp = TRUE
   )
 
@@ -43,9 +42,10 @@ if (.Platform$OS.type == "windows" && tinytest::at_home()) {
   )
   for (layer in layers) {
     expect_true(
-      raster::all.equal(
-        raster::raster(layer),
-        getLayer(control, sub("\\.tif$", "", basename(layer)))
+      terra::all.equal(
+        terra::rast(layer),
+        getLayer(control, sub("\\.tif$", "", basename(layer))),
+        maxcell = Inf
       ),
       info = '"DEMrelatedInput" outputs are correct (standard use case)'
     )

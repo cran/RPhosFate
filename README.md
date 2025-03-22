@@ -1,4 +1,4 @@
-An enhanced version of the semi-empirical, spatially distributed emission and transport model PhosFate implemented in R and C++. It currently supports suspended solids (SS) and particulate phosphorus (PP). A major feature is the allocation of substance loads entering surface waters to their sources of origin, which is a basic requirement for the identification of critical source areas and in consequence a cost-effective implementation of mitigation measures.
+An enhanced version of the semi-empirical, spatially distributed emission and transport model PhosFate implemented in R and C++. It is based on the D-infinity, but also supports the D8 flow method. The currently available substances are suspended solids (SS) and particulate phosphorus (PP). A major feature is the allocation of substance loads entering surface waters to their sources of origin, which is a basic requirement for the identification of critical source areas and in consequence a cost-effective implementation of mitigation measures.
 
 Copyright (C) 2021 RPhosFate authors
 
@@ -16,7 +16,7 @@ Install the latest release from CRAN:
 
 [![CRAN Version](https://www.r-pkg.org/badges/version/RPhosFate)](https://cran.r-project.org/package=RPhosFate) [![CRAN Checks](https://badges.cranchecks.info/worst/RPhosFate.svg)](https://cran.r-project.org/web/checks/check_results_RPhosFate.html)
 
-Install the development version from GitHub (requires [Rtools](https://cran.r-project.org/bin/windows/Rtools/) on Windows and the `remotes` package):
+Install the [development version](https://gisler.github.io/RPhosFate/dev/) from GitHub (requires [Rtools](https://cran.r-project.org/bin/windows/Rtools/) on Windows and the `remotes` package):
 
 `remotes::install_github("gisler/RPhosFate")`
 

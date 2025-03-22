@@ -12,13 +12,12 @@ DEMrelatedInput(
   sp_olp,
   sp_sds,
   cs_rds = NULL,
-  cs_wgs = NULL,
-  cs_dir = NULL,
+  ns_cha = NULL,
   ns_brn = 50,
   is_adj = 1L,
   is_ths = 1L,
-  ls_tmp = FALSE,
-  cs_fex = c("tif", "img")
+  ls_mD8 = FALSE,
+  ls_tmp = FALSE
 )
 }
 \arguments{
@@ -31,40 +30,36 @@ raster digital elevation model.}
 \item{cs_cha}{A character string specifying a path to a potentially large
 raster providing channels.}
 
-\item{sp_msk}{An \code{\link[sp:SpatialPolygonsDataFrame-class]{sp::SpatialPolygonsDataFrame}} providing a somewhat
-oversized catchment mask used to clip the potentially large input rasters
-for further processing.}
+\item{sp_msk}{A \code{\link[terra:SpatVector-class]{terra::SpatVector}} providing a somewhat oversized
+catchment polygon mask used to clip the potentially large input rasters for
+further processing.}
 
-\item{sp_olp}{An \code{\link[sp:SpatialPointsDataFrame-class]{sp::SpatialPointsDataFrame}} providing the desired
-catchment outlet(s).}
+\item{sp_olp}{A \code{\link[terra:SpatVector-class]{terra::SpatVector}} providing the desired catchment
+outlet point(s).}
 
-\item{sp_sds}{An \code{\link[sp:SpatialPointsDataFrame-class]{sp::SpatialPointsDataFrame}} providing channel
-sources.}
+\item{sp_sds}{A \code{\link[terra:SpatVector-class]{terra::SpatVector}} providing channel source points.}
 
 \item{cs_rds}{An optional character string specifying a path to a potentially
 large raster providing roads.}
 
-\item{cs_wgs}{An optional character string specifying a path to a potentially
-large raster providing flow accumulation weights.}
-
-\item{cs_dir}{An optional character string specifying a path to a potentially
-large raster providing D8 flow directions using \emph{ArcGIS} codes.}
+\item{ns_cha}{An optional numeric scalar specifying the minimum D8 flow
+accumulation in number of upslope grid cells determining a channel.}
 
 \item{ns_brn}{A numeric scalar specifying the stream burning step size in m.}
 
 \item{is_adj}{A numeric scalar specifying how many cells adjacent to channels
 shall be burnt.}
 
-\item{is_ths}{An integer scalar specifying the number of threads to use
-during computation (no effect in case \emph{OpenMP} is not supported by the
-toolchain and/or platform).}
+\item{is_ths}{An integer scalar specifying the number of threads to use for
+processing, where applicable.}
+
+\item{ls_mD8}{A logical scalar specifying if D8 flow directions shall be
+mimicked, i.e. the D-infinity flow directions are rounded to the nearest
+multiple of 45 degrees. Please note that this treatment is always applied
+to channel cells independently of this argument.}
 
 \item{ls_tmp}{A logical scalar specifying if the temporary files created
 during computation shall be kept.}
-
-\item{cs_fex}{A character string specifying the file extension of the created
-raster files (either the default \code{"tif"} or \code{"img"} for backward
-compatibility).}
 }
 \value{
 A two column numeric \code{\link{matrix}} specifying one or more catchment
@@ -72,11 +67,10 @@ outlet coordinates and side effects in the form of raster files.
 }
 \description{
 Clips, pre-processes and calculates or determines all input data related to
-the digital elevation model (DEM) in the broader sense: \emph{acc, acc_wtd,
-cha, dem, dir, rds, slp,} and \emph{wsh.}
+the digital elevation model (DEM) in the broader sense: \emph{acc_inf, cha,
+dem, dir_inf, rds, slp_inf,} and \emph{wsh.}
 
-Requires \emph{\href{https://hydrology.usu.edu/taudem/taudem5/downloads.html}{TauDEM}}
-5.3.7 and the
+Requires the
 \emph{\href{https://www.whiteboxgeo.com/download-whiteboxtools/}{WhiteboxTools}} binary
 (\code{\link[whitebox:install_whitebox]{whitebox::install_whitebox}}) to be installed on your computer.
 }
@@ -93,17 +87,12 @@ approximately into the direction of channel cells (no effect with \code{ns_brn =
 When roads are provided, they are considered as flow obstacles breaking the
 continuity of the calculated flow accumulations.
 
-In case no flow accumulation weights are provided, \emph{acc} and \emph{acc_wtd}
-are identical.
-
-Providing existing flow directions prevents calculating them, which, for
-example, may be useful in case the effect of tillage directions has been
-enforced on topographic flow directions in advance. Please note that doing so
-renders stream burning and depression breaching without effect.
+\code{ns_cha} can be used to enhance the channel network obtained by the tracing
+of downslope flowpaths from the provided channel sources.
 
 \emph{dem} represents the breached DEM with reversed stream burning if applicable.
-This processed DEM also serves as the basis for the calculation of the D8
-slopes provided by \emph{slp.}
+The basis for the calculation of the D-infinity slopes provided by
+\emph{slp_inf,} however, is the original DEM.
 }
 \examples{
 \dontrun{
@@ -120,11 +109,10 @@ nm_olc <- DEMrelatedInput(
   cv_dir = cv_dir,
   cs_dem = file.path(cs_dir_lrg, "dem_lrg.tif"),
   cs_cha = file.path(cs_dir_lrg, "cha_lrg.tif"),
-  sp_msk = raster::shapefile(file.path(cs_dir_lrg, "msk.shp")),
-  sp_olp = raster::shapefile(file.path(cs_dir_lrg, "olp.shp")),
-  sp_sds = raster::shapefile(file.path(cs_dir_lrg, "sds.shp")),
+  sp_msk = terra::vect(file.path(cs_dir_lrg, "msk.shp")),
+  sp_olp = terra::vect(file.path(cs_dir_lrg, "olp.shp")),
+  sp_sds = terra::vect(file.path(cs_dir_lrg, "sds.shp")),
   cs_rds = file.path(cs_dir_lrg, "rds_lrg.tif"),
-  cs_wgs = file.path(cs_dir_lrg, "wgs_lrg.tif"),
   ls_tmp = TRUE
 )}
 
@@ -132,7 +120,11 @@ nm_olc <- DEMrelatedInput(
 \references{
 \cite{Lindsay, J.B., 2016. Efficient hybrid breaching-filling sink removal
 methods for flow path enforcement in digital elevation models. Hydrological
-Processes 30, 846–857.}
+Processes 30, 846–857. https://doi.org/10.1002/hyp.10648}
+
+\cite{Tarboton, D.G., 1997. A new method for the determination of flow
+directions and upslope areas in grid digital elevation models. Water Resour.
+Res. 33, 309–319. https://doi.org/10.1029/96WR03137}
 }
 \seealso{
 \code{\link{RPhosFate}}, \code{\link{catchment}}

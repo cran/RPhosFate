@@ -1,18 +1,17 @@
 #' @import checkmate
 #' @import methods
-#' @import raster
-#' @importFrom graphics abline clip par points
+#' @import terra
+#' @importFrom graphics abline clip par
 #' @importFrom Rcpp sourceCpp
-#' @importFrom spatstat.geom as.owin as.ppp nncross
-#' @importFrom stats cor median optim optimize sd setNames
+#' @importFrom stats cor optim optimize sd setNames
 #' @importFrom yaml read_yaml write_yaml
 #' @importFrom utils modifyList packageVersion
 #' @useDynLib RPhosFate, .registration = TRUE
 NULL
 
-#### Class RPhosFateParameters2 ####
+#### Class RPhosFateParameters ####
 setClass(
-  "RPhosFateParameters2",
+  "RPhosFateParameters",
   slots = c(
     ns_slp_min = "numeric",
     ns_slp_max = "numeric",
@@ -25,12 +24,11 @@ setClass(
     ns_dep_cha = "numeric",
     nv_tfc_inl = "numeric",
     nv_enr_rto = "numeric",
-    iv_fDo     = "integer",
     nm_olc     = "matrix",
     df_cdt     = "data.frame"
   ),
   prototype = list(
-    ns_slp_min = 0.001,
+    ns_slp_min = 1.0,
     ns_slp_max = 999.0,
     ns_rhy_a   = 0.09,
     ns_rhy_b   = 0.50,
@@ -41,20 +39,19 @@ setClass(
     ns_dep_cha = numeric(),
     nv_tfc_inl = numeric(),
     nv_enr_rto = numeric(),
-    iv_fDo     = c(32L, 16L, 8L, 64L, 0L, 4L, 128L, 1L, 2L),
     nm_olc     = matrix(NA_real_),
     df_cdt     = data.frame()
   )
 )
 setMethod(
   "initialize",
-  "RPhosFateParameters2",
+  "RPhosFateParameters",
   function(.Object, arguments) {
     populateParameterSlots(.Object, arguments)
   }
 )
 setValidity(
-  "RPhosFateParameters2",
+  "RPhosFateParameters",
   function(object) {
     qassert(object@ns_slp_min, "N1[0,)", .var.name = "ns_slp_min")
     assertNumber(
@@ -68,7 +65,6 @@ setValidity(
     qassert(object@ns_cha_rto, "N1(0,1]", .var.name = "ns_cha_rto")
     qassert(object@ns_man_rip, "N1(0,)" , .var.name = "ns_man_rip")
     qassert(object@ns_man_cha, "N1(0,)" , .var.name = "ns_man_cha")
-    qassert(object@iv_fDo    , "I9[0,)" , .var.name = "iv_fDo"    )
 
     TRUE
   }
@@ -78,20 +74,19 @@ setValidity(
 setClass(
   "RPhosFateTopo",
   slots = c(
-    rl_acc     = "RasterLayer",
-    rl_acc_wtd = "RasterLayer",
-    rl_cha     = "RasterLayer",
-    rl_clc     = "RasterLayer",
-    rl_dem     = "RasterLayer",
-    rl_dir     = "RasterLayer",
-    rl_fid     = "RasterLayer",
-    rl_inl     = "RasterLayer",
-    rl_lue     = "RasterLayer",
-    rl_rds     = "RasterLayer",
-    rl_rip     = "RasterLayer",
-    rl_slp     = "RasterLayer",
-    rl_slp_cap = "RasterLayer",
-    rl_wsh     = "RasterLayer"
+    rl_acc_inf = "SpatRaster",
+    rl_cha     = "SpatRaster",
+    rl_clc     = "SpatRaster",
+    rl_dem     = "SpatRaster",
+    rl_dir_inf = "SpatRaster",
+    rl_fid     = "SpatRaster",
+    rl_inl     = "SpatRaster",
+    rl_lue     = "SpatRaster",
+    rl_rds     = "SpatRaster",
+    rl_rip     = "SpatRaster",
+    rl_slp_inf = "SpatRaster",
+    rl_slp_cap = "SpatRaster",
+    rl_wsh     = "SpatRaster"
   )
 )
 setMethod(
@@ -102,16 +97,15 @@ setMethod(
     on.exit(setwd(cs_dir_old))
 
     setwd("Input")
-    .Object@rl_acc     <- readLayer(cmt, "acc"          )
-    .Object@rl_acc_wtd <- readLayer(cmt, "acc_wtd", TRUE)
+    .Object@rl_acc_inf <- readLayer(cmt, "acc_inf", TRUE)
     .Object@rl_cha     <- readLayer(cmt, "cha"    , TRUE)
     .Object@rl_clc     <- readLayer(cmt, "clc"          )
     .Object@rl_dem     <- readLayer(cmt, "dem"          )
-    .Object@rl_dir     <- readLayer(cmt, "dir"          )
+    .Object@rl_dir_inf <- readLayer(cmt, "dir_inf"      )
     .Object@rl_fid     <- readLayer(cmt, "fid"          )
     .Object@rl_lue     <- readLayer(cmt, "lue"          )
     .Object@rl_rds     <- readLayer(cmt, "rds"          )
-    .Object@rl_slp     <- readLayer(cmt, "slp"    , TRUE)
+    .Object@rl_slp_inf <- readLayer(cmt, "slp_inf", TRUE)
     .Object@rl_wsh     <- readLayer(cmt, "wsh"          )
 
     setwd("../Intermediate")
@@ -127,12 +121,12 @@ setMethod(
 setClass(
   "RPhosFateErosion",
   slots = c(
-    rl_RFa = "RasterLayer",
-    rl_KFa = "RasterLayer",
-    rl_LFa = "RasterLayer",
-    rl_SFa = "RasterLayer",
-    rl_CFa = "RasterLayer",
-    rl_ero = "RasterLayer"
+    rl_RFa = "SpatRaster",
+    rl_KFa = "SpatRaster",
+    rl_LFa = "SpatRaster",
+    rl_SFa = "SpatRaster",
+    rl_CFa = "SpatRaster",
+    rl_ero = "SpatRaster"
   )
 )
 setMethod(
@@ -162,8 +156,7 @@ setMethod(
 setClass(
   "RPhosFateTransport",
   slots = c(
-    rl_man = "RasterLayer",
-    rl_rhy = "RasterLayer"
+    rl_man = "SpatRaster"
   )
 )
 setMethod(
@@ -176,9 +169,6 @@ setMethod(
     setwd("Input")
     .Object@rl_man <- readLayer(cmt, "man")
 
-    setwd("../Intermediate")
-    .Object@rl_rhy <- readLayer(cmt, "rhy")
-
     .Object
   }
 )
@@ -187,12 +177,12 @@ setMethod(
 setClass(
   "RPhosFateBare",
   slots = c(
-    rl_xxr     = "RasterLayer",
-    rl_xxt     = "RasterLayer",
-    rl_xxt_inp = "RasterLayer",
-    rl_xxt_out = "RasterLayer",
-    rl_xxt_cld = "RasterLayer",
-    rl_xxt_ctf = "RasterLayer"
+    rl_xxr     = "SpatRaster",
+    rl_xxt     = "SpatRaster",
+    rl_xxt_inp = "SpatRaster",
+    rl_xxt_out = "SpatRaster",
+    rl_xxt_cld = "SpatRaster",
+    rl_xxt_ctf = "SpatRaster"
   ),
   contains = "VIRTUAL"
 )
@@ -200,8 +190,8 @@ setClass(
 setClass(
   "RPhosFateConc",
   slots = c(
-    rl_xxc = "RasterLayer",
-    rl_xxe = "RasterLayer"
+    rl_xxc = "SpatRaster",
+    rl_xxe = "SpatRaster"
   ),
   contains = c("VIRTUAL", "RPhosFateBare")
 )
@@ -263,31 +253,17 @@ setMethod(
   }
 )
 
-#### Class RPhosFateOrder ####
-setClass(
-  "RPhosFateOrder",
-  slots = c(
-    iv_ord_row = "integer",
-    iv_ord_col = "integer",
-    iv_ord_ovl_row_rev = "integer",
-    iv_ord_ovl_col_rev = "integer"
-  )
-)
-
 #### Class RPhosFateHelpers ####
 setClass(
   "RPhosFateHelpers",
   slots = c(
-    ex_cmt     = "Extent",        # Extent of river catchment
-    is_res     = "integer",       # Cell resolution in m
-    is_siz     = "integer",       # Cell area in m^2
-    is_rws     = "integer",       # Number of rows
-    is_cls     = "integer",       # Number of columns
-    iv_fDo_dgl = "integer",       # Diagonal outflow direction vector
-    im_fDo     = "matrix",        # Outflow direction matrix
-    im_fDi     = "matrix",        # Inflow direction matrix
-    cv_met     = "character",     # Implemented calibration quality metrics
-    order      = "RPhosFateOrder" # Transport calculation order
+    cs_cmt = "character",  # Coordinate reference system of river catchment
+    ex_cmt = "SpatExtent", # Extent of river catchment
+    ns_res = "numeric",    # Cell resolution in m
+    ns_siz = "numeric",    # Cell area in m^2
+    is_rws = "integer",    # Number of rows
+    is_cls = "integer",    # Number of columns
+    cv_met = "character"   # Implemented calibration quality metrics
   )
 )
 setMethod(
@@ -297,23 +273,17 @@ setMethod(
     cs_dir_old <- setwd(cmt@cv_dir[1L])
     on.exit(setwd(cs_dir_old))
 
-    .Object@ex_cmt     <- extent(cmt@topo@rl_acc_wtd)
-    .Object@is_res     <- as.integer(xres(cmt@topo@rl_acc_wtd))
-    .Object@is_siz     <- as.integer(.Object@is_res^2)
-    .Object@is_rws     <- nrow(cmt@topo@rl_acc_wtd)
-    .Object@is_cls     <- ncol(cmt@topo@rl_acc_wtd)
-    .Object@iv_fDo_dgl <- cmt@parameters@iv_fDo[c(1L, 3L, 7L, 9L)]
-    .Object@im_fDo     <- matrix(cmt@parameters@iv_fDo, 3L)
-    .Object@im_fDi     <- matrix(rev(cmt@parameters@iv_fDo), 3L)
-
+    .Object@cs_cmt <- crs(cmt@topo@rl_acc_inf)
+    .Object@ex_cmt <- ext(cmt@topo@rl_acc_inf)
+    .Object@ns_res <- xres(cmt@topo@rl_acc_inf)
+    .Object@ns_siz <- .Object@ns_res^2
+    .Object@is_rws <- as.integer(nrow(cmt@topo@rl_acc_inf))
+    .Object@is_cls <- as.integer(ncol(cmt@topo@rl_acc_inf))
     .Object@cv_met <- c(
       "NSE", "mNSE", "KGE", "RMSE",
       "PBIAS", "RSR", "RCV",
       "GMRAE", "MdRAE"
     )
-    if (cmt@ls_ini && file.exists("order.rds")) {
-      .Object@order <- readRDS("order.rds")
-    }
 
     .Object
   }
@@ -328,14 +298,13 @@ setMethod(
 #'   optionally the Monte Carlo input data directory (second position).
 #' @slot ls_ini A logical scalar specifying if the state of an existing project
 #'   was loaded from disk.
+#' @slot is_ths An integer scalar holding the number of threads to use for
+#'   processing, where applicable.
 #' @slot is_MCi An integer scalar holding the current Monte Carlo iteration if
 #'   applicable.
 #' @slot cv_MCl A character vector holding the names of the layers, which shall
 #'   be written to disk with the associated Monte Carlo iteration in their
 #'   filenames upon calling the appropriate methods.
-#' @slot cs_fex A character string holding the automatically determined file
-#'   extension of the provided raster files (either `".tif"` or `".img"` for
-#'   backward compatibility).
 #' @slot parameters An S4 object holding the model parameters.
 #' @slot topo An S4 object holding the raster layers related to topography in
 #'   the broader sense.
@@ -353,10 +322,10 @@ setClass(
   slots = c(
     cv_dir     = "character",
     ls_ini     = "logical",
+    is_ths     = "integer",
     is_MCi     = "integer",
     cv_MCl     = "character",
-    cs_fex     = "character",
-    parameters = "RPhosFateParameters2",
+    parameters = "RPhosFateParameters",
     topo       = "RPhosFateTopo",
     erosion    = "RPhosFateErosion",
     transport  = "RPhosFateTransport",
@@ -366,9 +335,9 @@ setClass(
   prototype = list(
     cv_dir = character(),
     ls_ini = FALSE,
+    is_ths = 1L,
     is_MCi = integer(),
-    cv_MCl = "xxt",
-    cs_fex = ".tif"
+    cv_MCl = "xxt"
   )
 )
 setMethod(
@@ -383,6 +352,9 @@ setMethod(
     )
     if ("ls_ini" %in% argumentNames) {
       .Object@ls_ini <- arguments$ls_ini
+    }
+    if ("is_ths" %in% argumentNames) {
+      .Object@is_ths <- arguments$is_ths
     }
     if ("is_MCi" %in% argumentNames) {
       .Object@is_MCi <- arguments$is_MCi
@@ -402,17 +374,14 @@ setMethod(
       dir.create("Result")
     }
 
-    if (file.exists(file.path("Input", "acc_wtd.img"))) {
-      .Object@cs_fex <- ".img"
-    }
-
     .Object@substances <- new("RPhosFateSubstances", .Object)
 
-    if (.Object@ls_ini && file.exists("parameters.yaml")) {
+    if (.Object@ls_ini) {
+      if (!file.exists("parameters.yaml")) {
+        stop('"parameters.yaml" file does not exist.')
+      }
+
       arguments <- readParameters(arguments)
-      argumentNames <- names(arguments)
-    } else if (.Object@ls_ini && file.exists("parameters.rds")) {
-      arguments <- parametersRDS2YAML(slotNames(.Object@substances))
       argumentNames <- names(arguments)
     }
     arguments <- arguments[setdiff(
@@ -420,7 +389,7 @@ setMethod(
       c("RPhosFate", "cv_dir", "ls_ini", "is_MCi", "cv_MCl")
     )]
 
-    .Object@parameters <- new("RPhosFateParameters2", arguments)
+    .Object@parameters <- new("RPhosFateParameters", arguments)
     .Object@topo       <- new("RPhosFateTopo", .Object)
     .Object@erosion    <- new("RPhosFateErosion", .Object)
     .Object@transport  <- new("RPhosFateTransport", .Object)
@@ -440,6 +409,7 @@ setValidity(
       assertDirectoryExists(object@cv_dir[2L], .var.name = "cv_dir[2L]")
     }
     qassert(object@ls_ini, "B1"    , .var.name = "ls_ini")
+    qassert(object@is_ths, "I1(0,)", .var.name = "is_ths")
     qassert(object@is_MCi, "I?[0,)", .var.name = "is_MCi")
     qassert(object@cv_MCl, "S+"    , .var.name = "cv_MCl")
 

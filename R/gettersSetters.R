@@ -26,7 +26,7 @@ setGeneric(
 #'
 #' @inheritSection catchment _Result_ subdirectory
 #'
-#' @return A [`raster::RasterLayer-class`] object.
+#' @return A [`terra::SpatRaster-class`] object.
 #'
 #' @examples
 #' \donttest{
@@ -40,7 +40,7 @@ setGeneric(
 #' # presupposed method call
 #' x <- firstRun(x, "SS")
 #'
-#' getLayer(x, "dir")
+#' getLayer(x, "dir_inf")
 #' getLayer(x, "xxt", "SS")
 #' getLayer(x, "xxe", "PP")}
 #'
@@ -58,15 +58,15 @@ setMethod(
       assertSubset(i, sub("^rl_", "", slotNames(slot(x@substances, j))))
 
       return(slot(slot(x@substances, j), sprintf("rl_%s", i)))
-    } else {
-      for (object in c("topo", "erosion", "transport")) {
-        if (i %in% sub("^rl_", "", slotNames(slot(x, object)))) {
-          return(slot(slot(x, object), sprintf("rl_%s", i)))
-        }
+    }
+
+    for (object in c("topo", "erosion", "transport")) {
+      if (i %in% sub("^rl_", "", slotNames(slot(x, object)))) {
+        return(slot(slot(x, object), sprintf("rl_%s", i)))
       }
     }
 
-    stop(sprintf("Layer %s was not found.", deparse(i)), call. = FALSE)
+    stop(sprintf("Layer %s was not found.", deparse(i)))
   }
 )
 #' @rdname getLayer-RPhosFate-method

@@ -13,7 +13,7 @@ x <- RPhosFate(
   ls_ini = TRUE
 )
 
-source("parameters.R", local = TRUE) # nolint
+source("parameters.R", local = TRUE)
 
 #### RPhosFate and catchment ####
 y <- do.call(RPhosFate, parameters)
@@ -25,7 +25,7 @@ expect_identical(
   info = "parameters are created correctly"
 )
 
-expect_identical(
+expect_equal(
   y,
   z,
   info = '"RPhosFate" and "catchment" yield identical results (creation)'
@@ -52,7 +52,7 @@ expect_identical(
   info = "parameters are loaded correctly"
 )
 
-expect_identical(
+expect_equal(
   y,
   z,
   info = '"RPhosFate" and "catchment" yield identical results (loading)'
@@ -80,12 +80,13 @@ expect_identical(
 #### firstRun ####
 x <- firstRun(x, "SS")
 
-layers <- c("inl", "LFa", "rhy", "rip", "SFa", "slp_cap", "ero")
+layers <- c("inl", "LFa", "rip", "SFa", "slp_cap", "ero")
 for (layer in layers) {
   expect_true(
-    raster::all.equal(
+    terra::all.equal(
       getLayer(x      , layer),
-      getLayer(control, layer)
+      getLayer(control, layer),
+      maxcell = Inf
     ),
     info = 'substance independent "firstRun" outputs are correct'
   )
@@ -99,9 +100,10 @@ layers <- list(
 )
 for (i in seq_along(layers$layer)) {
   expect_true(
-    raster::all.equal(
+    terra::all.equal(
       getLayer(x      , layers$layer[i], layers$substance[i]),
-      getLayer(control, layers$layer[i], layers$substance[i])
+      getLayer(control, layers$layer[i], layers$substance[i]),
+      maxcell = Inf
     ),
     info = 'substance dependent "firstRun" outputs are correct'
   )
@@ -113,9 +115,10 @@ for (emissiveSubstance in setdiff(slotNames(control@substances), "SS")) {
   x <- subsequentRun(x, emissiveSubstance)
   for (layer in layers) {
     expect_true(
-      raster::all.equal(
+      terra::all.equal(
         getLayer(x      , layer, emissiveSubstance),
-        getLayer(control, layer, emissiveSubstance)
+        getLayer(control, layer, emissiveSubstance),
+        maxcell = Inf
       ),
       info = sprintf(
         '%s "subsequentRun" outputs are correct',
@@ -127,12 +130,6 @@ for (emissiveSubstance in setdiff(slotNames(control@substances), "SS")) {
 
 #### saveState ####
 saveState(x)
-
-expect_identical(
-  readRDS(file.path(cs_dir_tst, "order.rds")),
-  readRDS(file.path(cs_dir_ctl, "order.rds")),
-  info = '"order.rds" is written correctly'
-)
 
 expect_identical(
   yaml::read_yaml(file.path(cs_dir_tst, "parameters.yaml"))[-1L],
@@ -183,11 +180,11 @@ x <- RPhosFate(
   cv_dir = c(cs_dir_tst, cs_dir_ctl),
   ls_ini = TRUE,
   is_MCi = 1L,
-  cv_MCl = c("LFa", "rhy", "ero", "xxe", "xxt_cld")
+  cv_MCl = c("inl", "LFa", "ero", "xxe", "xxt_cld")
 )
 
 expect_identical(
-  basename(x@erosion@rl_CFa@file@name),
+  basename(terra::sources(x@erosion@rl_CFa)),
   "CFa1.tif",
   info = "Monte Carlo input data is detected (separate directory)"
 )
@@ -204,12 +201,24 @@ x <- subsequentRun(
 layers <- file.path(
   cs_dir_tst,
   c(rep("Intermediate", 2L), rep("Result", 3L)),
-  c("LFa1", "rhy1", "ero1", "ppe1", "ppt_cld1")
+  c("inl1", "LFa1", "ero1", "ppe1", "ppt_cld1")
 )
 for (layer in layers) {
   expect_true(
     file.exists(sprintf("%s.tif", layer)),
     info = "Monte Carlo simulation mode outputs exist"
+  )
+}
+
+layers <- file.path(
+  cs_dir_tst,
+  c(rep("Intermediate", 2L), rep("Result", 3L)),
+  c("rip1", "SFa1", "ppr1", "ppt1", "ppt_ctf1")
+)
+for (layer in layers) {
+  expect_false(
+    file.exists(sprintf("%s.tif", layer)),
+    info = "Monte Carlo simulation mode outputs do not exist"
   )
 }
 
@@ -220,7 +229,7 @@ x <- RPhosFate(
 )
 
 expect_identical(
-  basename(x@substances@PP@rl_xxt_cld@file@name),
+  basename(terra::sources(x@substances@PP@rl_xxt_cld)),
   "ppt_cld1.tif",
   info = "Monte Carlo input data is detected (project root subdirectories)"
 )
